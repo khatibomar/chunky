@@ -2,6 +2,7 @@ package checker
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -9,7 +10,9 @@ import (
 )
 
 var (
-	ErrNotValid = errors.New("the number of chuncks surpass MaxInt")
+	ErrInvalid    = errors.New("The provided link is Invalid")
+	ErrOverMaxInt = errors.New("The number of chuncks surpass Max Integer")
+	ErrUnxcpected = errors.New("Unxcpected error happened")
 )
 
 const (
@@ -18,12 +21,6 @@ const (
 	maxInt  = int(maxUint >> 1)
 	minInt  = -maxInt - 1
 )
-
-// GetChunksLength will return the chunks length of the video
-// it will use MaxInt as highest possible chunk length
-func GetChunksLength(link string) (int, error) {
-	return GetChunksLengthWithMax(link, maxInt)
-}
 
 // GetChunksLength will return the chunks length of the video
 // it will use max parameter as highest possible chunk length
@@ -42,8 +39,12 @@ func GetChunksLengthWithMax(link string, max int) (int, error) {
 	sub_link = strings.Split(link, "/chunked/")[0] + "/chunked/"
 	link = sub_link + strconv.Itoa(high) + ".ts"
 
-	if status, _ := getStatusCode(link); status == 200 {
-		return -1, ErrNotValid
+	status, err := getStatusCode(link)
+	if err != nil {
+		return -1, err
+	}
+	if status == http.StatusOK {
+		return -1, fmt.Errorf("checker: %s", ErrOverMaxInt)
 	}
 
 	for {
@@ -51,20 +52,35 @@ func GetChunksLengthWithMax(link string, max int) (int, error) {
 		link = sub_link + strconv.Itoa(high) + ".ts"
 		log.Println("Trying: " + link)
 
-		if status, _ := getStatusCode(link); status != 200 {
+		status, err := getStatusCode(link)
+		if err != nil {
+			return -1, nil
+		}
+
+		if status != http.StatusOK {
 			currHigh = high
 		} else {
 			high = currHigh
 			break
 		}
+
+		if low >= high {
+			return -1, fmt.Errorf("checker: %s", ErrInvalid)
+		}
 	}
-	log.Println("Highest: " + link)
+	log.Println("Highest Guess: " + link)
 
 	for {
 		mid = (high + low) / 2
 		link = sub_link + strconv.Itoa(mid) + ".ts"
+
 		log.Println("Trying: " + link)
-		if status, _ := getStatusCode(link); status == 200 {
+
+		status, err := getStatusCode(link)
+		if err != nil {
+			return -1, err
+		}
+		if status == http.StatusOK {
 			low = mid
 		} else {
 			high = mid
@@ -72,9 +88,18 @@ func GetChunksLengthWithMax(link string, max int) (int, error) {
 		if high == low+1 {
 			break
 		}
+		if low >= high {
+			return -1, fmt.Errorf("checker: %s", ErrUnxcpected)
+		}
 	}
 
 	return low, nil
+}
+
+// GetChunksLength will return the chunks length of the video
+// it will use MaxInt as highest possible chunk length
+func GetChunksLength(link string) (int, error) {
+	return GetChunksLengthWithMax(link, maxInt)
 }
 
 // getStatusCode will try and make an HTTP Get request to a giving URL
