@@ -54,7 +54,7 @@ func GetChunksLengthWithMax(link string, max int) (int, error) {
 
 		status, err := getStatusCode(link)
 		if err != nil {
-			return -1, nil
+			return -1, err
 		}
 
 		if status != http.StatusOK {
