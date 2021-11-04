@@ -47,12 +47,19 @@ func (c *CloudfrontChecker) GetChunksLength() (int, error) {
 
 	sub_link = strings.Split(c.Url, "/chunked/")[0] + "/chunked/"
 	link = sub_link + strconv.Itoa(high) + ".ts"
-
+	c.Log.Println("Trying: " + link)
 	status, err := getStatusCode(link)
 	if err != nil {
 		return -1, err
 	}
 	if status == http.StatusOK {
+		status, err = getStatusCode(sub_link + strconv.Itoa(high+1) + ".ts")
+		if err != nil {
+			return -1, err
+		}
+		if status != http.StatusOK {
+			return high, nil
+		}
 		return -1, fmt.Errorf("checker: %s", ErrOverMaxInt)
 	}
 

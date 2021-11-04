@@ -11,7 +11,7 @@ type logger interface {
 
 var (
 	ErrInvalid    = errors.New("The provided link is Invalid")
-	ErrOverMaxInt = errors.New("The number of chuncks surpass Max Integer")
+	ErrOverMaxInt = errors.New("The number of chuncks surpass Max")
 	ErrUnxcpected = errors.New("Unxcpected error happened")
 )
 
