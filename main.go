@@ -8,6 +8,7 @@ import (
 	"math"
 	"os"
 	"path"
+	"strconv"
 
 	"chunky.github.com/downloader"
 
@@ -70,10 +71,12 @@ func run(log *log.Logger, cfg Config) error {
 
 	log.Printf("Nb of chunks is %d", nbChunks)
 	if cfg.Dwn {
-		d := downloader.NewFileDownloaderWithLog(log, cfg.Link, "test.ts", cfg.Path)
-		err = d.Download()
-		if err != nil {
-			return err
+		for i := 0; i <= nbChunks; i++ {
+			d := downloader.NewFileDownloaderWithLog(log, cfg.Link, strconv.Itoa(i)+".ts", cfg.Path)
+			err = d.Download()
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
