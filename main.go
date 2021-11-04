@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math"
 	"os"
 
 	"chunky.github.com/downloader"
@@ -14,13 +15,6 @@ import (
 
 var (
 	ErrMissingArgs = errors.New("Missing or Invalid arguments")
-)
-
-const (
-	MaxUint = ^uint(0)
-	MinUint = 0
-	MaxInt  = int(MaxUint >> 1)
-	MinInt  = -MaxInt - 1
 )
 
 func main() {
@@ -55,7 +49,7 @@ func run(log *log.Logger, link string, max int, dwn bool) error {
 		return ErrMissingArgs
 	}
 	if max <= 0 {
-		c = checker.NewCloudfrontCheckerWithLog(link, MaxInt, log)
+		c = checker.NewCloudfrontCheckerWithLog(link, math.MaxInt, log)
 	} else {
 		c = checker.NewCloudfrontCheckerWithLog(link, max, log)
 	}
