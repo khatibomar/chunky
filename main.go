@@ -23,7 +23,7 @@ func main() {
 	link := flag.String("url", "", `provide a link that have a chunk , example:
 https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_handmade_hero_40072241627_1633745055/chunked/155.ts
 `)
-	p := flag.String("dir", "", "specify a download path")
+	p := flag.String("dir", "", "sepcify a download path")
 	max := flag.Int("max", -1, "provide the excpected max number of files, zero or negative numbers will be treated as max int")
 	dwn := flag.Bool("dwn", true, "by default true , false if you just want to get chunks size without downloading files")
 
