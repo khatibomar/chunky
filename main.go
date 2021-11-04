@@ -16,6 +16,13 @@ var (
 	ErrMissingArgs = errors.New("Missing or Invalid arguments")
 )
 
+const (
+	MaxUint = ^uint(0)
+	MinUint = 0
+	MaxInt  = int(MaxUint >> 1)
+	MinInt  = -MaxInt - 1
+)
+
 func main() {
 	link := flag.String("url", "", `provide a link that have a chunk , example:
 https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_handmade_hero_40072241627_1633745055/chunked/155.ts
@@ -48,7 +55,7 @@ func run(log *log.Logger, link string, max int, dwn bool) error {
 		return ErrMissingArgs
 	}
 	if max <= 0 {
-		c = checker.NewCloudfrontCheckerWithLog(link, checker.MaxInt, log)
+		c = checker.NewCloudfrontCheckerWithLog(link, MaxInt, log)
 	} else {
 		c = checker.NewCloudfrontCheckerWithLog(link, max, log)
 	}

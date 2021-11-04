@@ -15,13 +15,6 @@ var (
 	ErrUnxcpected = errors.New("Unxcpected error happened")
 )
 
-const (
-	MaxUint = ^uint(0)
-	MinUint = 0
-	MaxInt  = int(MaxUint >> 1)
-	MinInt  = -MaxInt - 1
-)
-
 // getStatusCode will try and make an HTTP Get request to a giving URL
 // and return it's HTTP Status Code
 func getStatusCode(url string) (int, error) {

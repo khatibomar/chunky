@@ -42,7 +42,6 @@ func (c *CloudfrontChecker) GetChunksLength() (int, error) {
 	var link string
 	var sub_link string
 
-	low = MinUint
 	high = c.Max
 	currHigh = high
 
