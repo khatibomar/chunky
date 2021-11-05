@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-type logger interface {
+type checker interface {
 	GetChunksLength() (int, error)
 }
 
