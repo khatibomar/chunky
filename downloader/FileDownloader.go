@@ -40,10 +40,10 @@ func (fd *FileDownloader) Download() error {
 		return err
 	}
 	resp, err := http.Get(fd.Url)
-	defer resp.Body.Close()
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
 	fd.Log.Printf("Downloading %s to %s\n", fd.Name, fd.Path)
 

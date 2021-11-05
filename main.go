@@ -71,12 +71,15 @@ func run(log *log.Logger, cfg Config) error {
 
 	log.Printf("Nb of chunks is %d", nbChunks)
 	if cfg.Dwn {
+		baseLink := checker.GetBaseLink(cfg.Link)
+		bd := downloader.NewBulkDownloaderWithLog(log, "test", ".ts", cfg.Path)
 		for i := 0; i <= nbChunks; i++ {
-			d := downloader.NewFileDownloaderWithLog(log, cfg.Link, strconv.Itoa(i)+".ts", cfg.Path)
-			err = d.Download()
-			if err != nil {
-				return err
-			}
+			bd.AddUrl(baseLink + strconv.Itoa(i) + ".ts")
+		}
+		errs := bd.Download()
+		// TODO (OmarElKhatibCS) Handle errors here better
+		if len(errs) > 0 {
+			return errs[0]
 		}
 	}
 	return nil
