@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
 type CloudfrontChecker struct {
@@ -40,20 +39,20 @@ func (c *CloudfrontChecker) GetChunksLength() (int, error) {
 	var currHigh int
 
 	var link string
-	var sub_link string
+	var baseLink string
 
 	high = c.Max
 	currHigh = high
 
-	sub_link = strings.Split(c.Url, "/chunked/")[0] + "/chunked/"
-	link = sub_link + strconv.Itoa(high) + ".ts"
+	baseLink = GetBaseLink(c.Url)
+	link = baseLink + strconv.Itoa(high) + ".ts"
 	c.Log.Println("Trying: " + link)
 	status, err := getStatusCode(link)
 	if err != nil {
 		return -1, err
 	}
 	if status == http.StatusOK {
-		status, err = getStatusCode(sub_link + strconv.Itoa(high+1) + ".ts")
+		status, err = getStatusCode(baseLink + strconv.Itoa(high+1) + ".ts")
 		if err != nil {
 			return -1, err
 		}
@@ -65,7 +64,7 @@ func (c *CloudfrontChecker) GetChunksLength() (int, error) {
 
 	for {
 		high = high / 2
-		link = sub_link + strconv.Itoa(high) + ".ts"
+		link = baseLink + strconv.Itoa(high) + ".ts"
 		c.Log.Println("Trying: " + link)
 
 		status, err := getStatusCode(link)
@@ -88,7 +87,7 @@ func (c *CloudfrontChecker) GetChunksLength() (int, error) {
 
 	for {
 		mid = (high + low) / 2
-		link = sub_link + strconv.Itoa(mid) + ".ts"
+		link = baseLink + strconv.Itoa(mid) + ".ts"
 
 		c.Log.Println("Trying: " + link)
 
