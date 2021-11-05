@@ -10,9 +10,8 @@ import (
 	"path"
 	"strconv"
 
-	"chunky.github.com/downloader"
-
-	"chunky.github.com/checker"
+	"chunky.github.com/check"
+	"chunky.github.com/dwn"
 )
 
 var (
@@ -54,15 +53,15 @@ func run(log *log.Logger, cfg Config) error {
 	var nbChunks int
 	var err error
 
-	var c *checker.CloudfrontChecker
+	var c *check.CloudfrontChecker
 
 	if cfg.Link == "" {
 		return ErrMissingArgs
 	}
 	if cfg.Max <= 0 {
-		c = checker.NewCloudfrontCheckerWithLog(cfg.Link, math.MaxInt-1, log)
+		c = check.NewCloudfrontCheckerWithLog(cfg.Link, math.MaxInt-1, log)
 	} else {
-		c = checker.NewCloudfrontCheckerWithLog(cfg.Link, cfg.Max, log)
+		c = check.NewCloudfrontCheckerWithLog(cfg.Link, cfg.Max, log)
 	}
 	nbChunks, err = c.GetChunksLength()
 	if err != nil {
@@ -71,8 +70,8 @@ func run(log *log.Logger, cfg Config) error {
 
 	log.Printf("Nb of chunks is %d", nbChunks)
 	if cfg.Dwn {
-		baseLink := checker.GetBaseLink(cfg.Link)
-		bd := downloader.NewBulkDownloaderWithLog(log, "test", ".ts", cfg.Path)
+		baseLink := check.GetBaseLink(cfg.Link)
+		bd := dwn.NewBulkDownloaderWithLog(log, "test", ".ts", cfg.Path)
 		for i := 0; i <= nbChunks; i++ {
 			bd.AddUrl(baseLink + strconv.Itoa(i) + ".ts")
 		}
