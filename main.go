@@ -10,8 +10,8 @@ import (
 	"path"
 	"strconv"
 
-	"chunky.github.com/check"
-	"chunky.github.com/dwn"
+	"github.com/khatibomar/chunky/check"
+	"github.com/khatibomar/chunky/dwn"
 )
 
 var (

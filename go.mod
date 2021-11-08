@@ -1,3 +1,3 @@
-module chunky.github.com
+module github.com/khatibomar/chunky
 
 go 1.17
