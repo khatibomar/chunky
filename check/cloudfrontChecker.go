@@ -1,9 +1,9 @@
 package check
 
 import (
-	"fmt"
 	"io"
 	"log"
+	"math"
 	"net/http"
 	"strconv"
 )
@@ -53,6 +53,10 @@ func (c *CloudfrontChecker) Check() (int, error) {
 	var link string
 	var baseLink string
 
+	if c.Max <= 0 {
+		c.Max = math.MaxInt
+	}
+
 	high = c.Max
 	currHigh = high
 
@@ -71,7 +75,7 @@ func (c *CloudfrontChecker) Check() (int, error) {
 		if status != http.StatusOK {
 			return high, nil
 		}
-		return -1, fmt.Errorf("checker: %s", ErrOverMaxInt)
+		return -1, ErrOverMaxInt
 	}
 
 	for {
@@ -92,7 +96,7 @@ func (c *CloudfrontChecker) Check() (int, error) {
 		}
 
 		if low >= high {
-			return -1, fmt.Errorf("checker: %s", ErrInvalid)
+			return -1, ErrInvalid
 		}
 	}
 	c.Log.Println("Highest Guess: " + link)
@@ -116,7 +120,7 @@ func (c *CloudfrontChecker) Check() (int, error) {
 			break
 		}
 		if low >= high {
-			return -1, fmt.Errorf("checker: %s", ErrUnxcpected)
+			return -1, ErrUnxcpected
 		}
 	}
 
