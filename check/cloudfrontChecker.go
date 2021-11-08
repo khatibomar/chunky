@@ -9,30 +9,42 @@ import (
 )
 
 type CloudfrontChecker struct {
-	Url string
-	Max int
-	Log *log.Logger
+	Url       string
+	Max       int
+	Log       *log.Logger
+	GetStatus func(string) (int, error)
 }
 
 func NewCloudfrontChecker(url string, max int) *CloudfrontChecker {
 	return &CloudfrontChecker{
-		Url: url,
-		Max: max,
-		Log: log.New(io.Discard, "", 0),
+		Url:       url,
+		Max:       max,
+		Log:       log.New(io.Discard, "", 0),
+		GetStatus: getStatusCode,
 	}
 }
 
 func NewCloudfrontCheckerWithLog(url string, max int, log *log.Logger) *CloudfrontChecker {
 	return &CloudfrontChecker{
-		Url: url,
-		Max: max,
-		Log: log,
+		Url:       url,
+		Max:       max,
+		Log:       log,
+		GetStatus: getStatusCode,
+	}
+}
+
+func NewTestCloudfrontChecker(url string, max int) *CloudfrontChecker {
+	return &CloudfrontChecker{
+		Url:       url,
+		Max:       max,
+		Log:       log.New(io.Discard, "", 0),
+		GetStatus: mockGetStatusCode,
 	}
 }
 
 // GetChunksLength will return the chunks length of the video
 // it will use max parameter as highest possible chunk length
-func (c *CloudfrontChecker) GetChunksLength() (int, error) {
+func (c *CloudfrontChecker) Check() (int, error) {
 	var low int
 	var mid int
 	var high int
@@ -47,12 +59,12 @@ func (c *CloudfrontChecker) GetChunksLength() (int, error) {
 	baseLink = GetBaseLink(c.Url)
 	link = baseLink + strconv.Itoa(high) + ".ts"
 	c.Log.Println("Trying: " + link)
-	status, err := getStatusCode(link)
+	status, err := c.GetStatus(link)
 	if err != nil {
 		return -1, err
 	}
 	if status == http.StatusOK {
-		status, err = getStatusCode(baseLink + strconv.Itoa(high+1) + ".ts")
+		status, err = c.GetStatus(baseLink + strconv.Itoa(high+1) + ".ts")
 		if err != nil {
 			return -1, err
 		}
@@ -67,7 +79,7 @@ func (c *CloudfrontChecker) GetChunksLength() (int, error) {
 		link = baseLink + strconv.Itoa(high) + ".ts"
 		c.Log.Println("Trying: " + link)
 
-		status, err := getStatusCode(link)
+		status, err := c.GetStatus(link)
 		if err != nil {
 			return -1, err
 		}
@@ -91,7 +103,7 @@ func (c *CloudfrontChecker) GetChunksLength() (int, error) {
 
 		c.Log.Println("Trying: " + link)
 
-		status, err := getStatusCode(link)
+		status, err := c.GetStatus(link)
 		if err != nil {
 			return -1, err
 		}
@@ -108,5 +120,5 @@ func (c *CloudfrontChecker) GetChunksLength() (int, error) {
 		}
 	}
 
-	return low, nil
+	return low + 1, nil
 }

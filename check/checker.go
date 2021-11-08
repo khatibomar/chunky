@@ -3,10 +3,11 @@ package check
 import (
 	"errors"
 	"net/http"
+	"strconv"
 )
 
 type checker interface {
-	GetChunksLength() (int, error)
+	Check() (int, error)
 }
 
 var (
@@ -25,4 +26,14 @@ func getStatusCode(url string) (int, error) {
 	defer resp.Body.Close()
 
 	return resp.StatusCode, nil
+}
+
+func mockGetStatusCode(url string) (int, error) {
+	var m = make(map[string]int)
+	for i := 0; i < 15; i++ {
+		link := "https://xxxxx.cloudfront.net/gebrish_user_XXXXXX_XXXXXXX/chunked/" + strconv.Itoa(i) + ".ts"
+		m[link] = http.StatusOK
+	}
+
+	return m[url], nil
 }

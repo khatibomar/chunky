@@ -6,6 +6,8 @@
 *.dylib
 *.ts
 *.mp4
+chunky
+chunky.github.com
 
 # Test binary, built with `go test -c`
 *.test
