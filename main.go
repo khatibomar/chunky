@@ -41,6 +41,12 @@ https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_handmade_hero_4007224
 	err := run(infoLogger, c)
 	if err != nil {
 		if errors.Is(err, ErrMissingArgs) {
+			fmt.Println(`
+chunky is a tool that will allow you to download subscribers only videos from twitch.
+The tool is under current developement so many bugs will occur , and many missing features and many hard coded stuff.
+So please if you found any bug or missing features feel free to open an issue on project page:
+https://github.com/khatibomar/chunky
+			`)
 			fmt.Println("Usage: ")
 			flag.PrintDefaults()
 			return
