@@ -38,7 +38,6 @@ https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_handmade_hero_4007224
 	infoLogger := log.New(os.Stdout, "Info : ", log.Ldate|log.Ltime)
 	errLogger := log.New(os.Stderr, "Error : ", log.Ldate|log.Ltime)
 
-	infoLogger.Println("the number of chunks start from 0 not 1")
 	err := run(infoLogger, c)
 	if err != nil {
 		if errors.Is(err, ErrMissingArgs) {
@@ -69,7 +68,7 @@ func run(log *log.Logger, cfg Config) error {
 		return err
 	}
 
-	log.Printf("Nb of chunks is %d", nbChunks)
+	log.Printf("Nb of chunks from %d to %d", 0, nbChunks+1)
 	if cfg.Dwn {
 		baseLink := check.GetBaseLink(cfg.Link)
 		bd := dwn.NewBulkDownloaderWithLog(log, "test", ".ts", cfg.Path)

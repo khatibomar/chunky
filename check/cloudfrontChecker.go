@@ -120,5 +120,5 @@ func (c *CloudfrontChecker) Check() (int, error) {
 		}
 	}
 
-	return low + 1, nil
+	return low, nil
 }
