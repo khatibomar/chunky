@@ -38,54 +38,55 @@ https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_handmade_hero_4007224
 	infoLogger := log.New(os.Stdout, "Info : ", log.Ldate|log.Ltime)
 	errLogger := log.New(os.Stderr, "Error : ", log.Ldate|log.Ltime)
 
-	err := run(infoLogger, c)
-	if err != nil {
-		if errors.Is(err, ErrMissingArgs) {
-			fmt.Println(`
+	errs := run(infoLogger, c)
+	if len(errs) > 0 {
+		for _, err := range errs {
+			if errors.Is(err, ErrMissingArgs) {
+				fmt.Println(`
 chunky is a tool that will allow you to download subscribers only videos from twitch.
 The tool is under current developement so many bugs will occur , and many missing features and many hard coded stuff.
 So please if you found any bug or missing features feel free to open an issue on project page:
 https://github.com/khatibomar/chunky
 			`)
-			fmt.Println("Usage: ")
-			flag.PrintDefaults()
-			return
+				fmt.Println("Usage: ")
+				flag.PrintDefaults()
+				return
+			}
+			errLogger.Printf("main: %s\n", err)
 		}
-		errLogger.Fatalf("main: %s\n", err)
 	}
 }
 
-func run(log *log.Logger, cfg Config) error {
+func run(log *log.Logger, cfg Config) []error {
 	var nbChunks int
-	var err error
+	var errs []error
 
 	var c *check.CloudfrontChecker
 
 	if cfg.Link == "" {
-		return ErrMissingArgs
+		errs = append(errs, ErrMissingArgs)
+		return errs
 	}
 	if cfg.Max <= 0 {
 		c = check.NewCloudfrontCheckerWithLog(cfg.Link, math.MaxInt-1, log)
 	} else {
 		c = check.NewCloudfrontCheckerWithLog(cfg.Link, cfg.Max, log)
 	}
-	nbChunks, err = c.Check()
+	nbChunks, err := c.Check()
 	if err != nil {
-		return err
+		errs = append(errs, err)
+		return errs
 	}
 
 	log.Printf("Nb of chunks from %d to %d", 0, nbChunks+1)
 	if cfg.Dwn {
 		baseLink := check.GetBaseLink(cfg.Link)
+		// TODO(khatibomar): make error logging live instead of waiting the function to return
 		bd := dwn.NewBulkDownloaderWithLog(log, "test", ".ts", cfg.Path)
 		for i := 0; i <= nbChunks; i++ {
 			bd.AddUrl(baseLink + strconv.Itoa(i) + ".ts")
 		}
-		errs := bd.Download()
-		// TODO (OmarElKhatibCS) Handle errors here better
-		if len(errs) > 0 {
-			return errs[0]
-		}
+		errs = bd.Download()
 	}
-	return nil
+	return errs
 }
