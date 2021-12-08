@@ -41,13 +41,12 @@ func (bd *BulkDownloader) AddUrl(url string) {
 func (bd *BulkDownloader) Download() []error {
 	var fd downloader
 	var errs []error
-	var err error
 
 	for i, url := range bd.Urls {
 		fd = NewFileDownloaderWithLog(bd.Log, url, bd.Prefix+strconv.Itoa(i)+bd.Extension, bd.Path)
-		err = fd.Download()
-		if err != nil {
+		if err := fd.Download(); err != nil {
 			errs = append(errs, err)
+			bd.Log.Println(err)
 		}
 	}
 

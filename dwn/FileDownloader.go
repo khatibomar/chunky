@@ -52,9 +52,6 @@ func (fd *FileDownloader) Download() error {
 		return err
 	}
 
-	if err != nil {
-		return err
-	}
 	p := path.Join(fd.Path, fd.Name)
 
 	return os.WriteFile(p, file, 0664)
