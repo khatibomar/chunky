@@ -37,6 +37,16 @@ https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_handmade_hero_4007224
 
 	flag.Parse()
 
+	if *p != "" {
+		if (*p)[0] == '~' {
+			home, err := os.UserHomeDir()
+			if err != nil {
+				panic("failed to get home user , this should not happen")
+			}
+			*p = home + (*p)[1:]
+		}
+	}
+
 	c := Config{
 		Link: *link,
 		Max:  *max,
