@@ -25,7 +25,7 @@ func NewBulkDownloader(prefix, extension, path string, errChan chan error, doneC
 		Path:      path,
 		Log:       log.New(io.Discard, "", 0),
 		ErrChan:   errChan,
-		DoneChan:  make(chan bool),
+		DoneChan:  doneChan,
 	}
 }
 
