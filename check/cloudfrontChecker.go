@@ -25,21 +25,15 @@ func NewCloudfrontChecker(url string, max int) *CloudfrontChecker {
 }
 
 func NewCloudfrontCheckerWithLog(url string, max int, log *log.Logger) *CloudfrontChecker {
-	return &CloudfrontChecker{
-		Url:       url,
-		Max:       max,
-		Log:       log,
-		GetStatus: getStatusCode,
-	}
+	c := NewCloudfrontChecker(url, max)
+	c.Log = log
+	return c
 }
 
 func NewTestCloudfrontChecker(url string, max int) *CloudfrontChecker {
-	return &CloudfrontChecker{
-		Url:       url,
-		Max:       max,
-		Log:       log.New(io.Discard, "", 0),
-		GetStatus: mockGetStatusCode,
-	}
+	c := NewCloudfrontChecker(url, max)
+	c.GetStatus = mockGetStatusCode
+	return c
 }
 
 // GetChunksLength will return the chunks length of the video
