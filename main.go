@@ -31,7 +31,7 @@ func main() {
 	link := flag.String("url", "", `provide a link that have a chunk , example:
 https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_handmade_hero_40072241627_1633745055/chunked/155.ts
 `)
-	p := flag.String("dir", "", "specify a download path")
+	p := flag.String("dir", "", "specify a download path , for *nix users use $HOME instead of ~ ")
 	max := flag.Int("max", -1, "provide the excpected max number of files, zero or negative numbers will be treated as max int")
 	down := flag.Bool("dwn", true, "by default true , false if you just want to get chunks size without downloading files")
 
@@ -47,41 +47,43 @@ https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_handmade_hero_4007224
 	infoLogger := log.New(os.Stdout, "Info : ", log.Ldate|log.Ltime)
 	errLogger := log.New(os.Stderr, "Error : ", log.Ldate|log.Ltime)
 	errChan := make(chan error)
+	doneChan := make(chan bool)
 
-	go run(infoLogger, c, errChan)
-	// TODO(khatibomar): Do more research is this OK?!
-	// should I make an signal close instead of letting caller close the chan?!
+	go run(infoLogger, c, errChan, doneChan)
+
 	for {
-		err, ok := <-errChan
-		if !ok {
-			break
-		}
-		if errors.Is(err, ErrMissingArgs) {
-			fmt.Println(description)
-			fmt.Println("Usage: ")
-			flag.PrintDefaults()
-			return
-		}
-		if err != nil {
-			if errors.Is(errors.Unwrap(err), dwn.ErrFileExist) {
-				infoLogger.Println(err)
-			} else {
-				errLogger.Fatal(err)
+		select {
+		case err := <-errChan:
+			if errors.Is(err, ErrMissingArgs) {
+				fmt.Println(description)
+				fmt.Println("Usage: ")
+				flag.PrintDefaults()
+				return
+			}
+			if err != nil {
+				if errors.Is(errors.Unwrap(err), dwn.ErrFileExist) {
+					infoLogger.Println(err)
+				} else {
+					errLogger.Fatal(err)
+				}
+			}
+		case done := <-doneChan:
+			if done {
+				close(errChan)
+				close(doneChan)
+				goto DONE_FOR
 			}
 		}
 	}
-
-	_, ok := <-errChan
-	if ok {
-		close(errChan)
-	}
+DONE_FOR:
 }
 
-func run(log *log.Logger, cfg Config, errChan chan error) {
+func run(log *log.Logger, cfg Config, errChan chan error, doneChan chan bool) {
 	var nbChunks int
 	var c *check.CloudfrontChecker
 	if cfg.Link == "" {
 		errChan <- ErrMissingArgs
+		doneChan <- true
 		return
 	}
 	if cfg.Max <= 0 {
@@ -92,18 +94,19 @@ func run(log *log.Logger, cfg Config, errChan chan error) {
 	nbChunks, err := c.Check()
 	if err != nil {
 		errChan <- err
+		doneChan <- true
 		return
 	}
 
 	log.Printf("Nb of chunks is %d , from %d to %d", nbChunks+1, 0, nbChunks)
 	if cfg.Dwn {
 		baseLink := check.GetBaseLink(cfg.Link)
-		bd := dwn.NewBulkDownloaderWithLog(log, "", ".ts", cfg.Path, errChan)
+		bd := dwn.NewBulkDownloaderWithLog(log, "", ".ts", cfg.Path, errChan, doneChan)
 		for i := 0; i <= nbChunks; i++ {
 			bd.AddUrl(baseLink + strconv.Itoa(i) + ".ts")
 		}
 		go bd.Download()
 	} else {
-		close(errChan)
+		doneChan <- true
 	}
 }

@@ -14,10 +14,10 @@ type BulkDownloader struct {
 	Path      string
 	Log       *log.Logger
 	ErrChan   chan error
-	InfoChan  chan string
+	DoneChan  chan bool
 }
 
-func NewBulkDownloader(prefix, extension, path string, errChan chan error) *BulkDownloader {
+func NewBulkDownloader(prefix, extension, path string, errChan chan error, doneChan chan bool) *BulkDownloader {
 	return &BulkDownloader{
 		Urls:      nil,
 		Prefix:    prefix,
@@ -25,12 +25,12 @@ func NewBulkDownloader(prefix, extension, path string, errChan chan error) *Bulk
 		Path:      path,
 		Log:       log.New(io.Discard, "", 0),
 		ErrChan:   errChan,
-		InfoChan:  make(chan string),
+		DoneChan:  make(chan bool),
 	}
 }
 
-func NewBulkDownloaderWithLog(log *log.Logger, prefix, extension, path string, errChan chan error) *BulkDownloader {
-	b := NewBulkDownloader(prefix, extension, path, errChan)
+func NewBulkDownloaderWithLog(log *log.Logger, prefix, extension, path string, errChan chan error, doneChan chan bool) *BulkDownloader {
+	b := NewBulkDownloader(prefix, extension, path, errChan, doneChan)
 	b.Log = log
 	return b
 }
@@ -49,7 +49,6 @@ func (bd *BulkDownloader) Download() error {
 			bd.ErrChan <- fmt.Errorf("%s: %w", name, err)
 		}
 	}
-	// TODO(khatibomar): Is this right thing to do?!!!
-	close(bd.ErrChan)
+	bd.DoneChan <- true
 	return nil
 }
