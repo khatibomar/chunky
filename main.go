@@ -53,7 +53,7 @@ https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_handmade_hero_4007224
 	// should I make an signal close instead of letting caller close the chan?!
 	for {
 		err, ok := <-errChan
-		if ok == false {
+		if !ok {
 			break
 		}
 		if errors.Is(err, ErrMissingArgs) {
@@ -70,7 +70,11 @@ https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_handmade_hero_4007224
 			}
 		}
 	}
-	defer close(errChan)
+
+	_, ok := <-errChan
+	if ok {
+		close(errChan)
+	}
 }
 
 func run(log *log.Logger, cfg Config, errChan chan error) {
@@ -91,7 +95,7 @@ func run(log *log.Logger, cfg Config, errChan chan error) {
 		return
 	}
 
-	log.Printf("Nb of chunks from %d to %d", 0, nbChunks+1)
+	log.Printf("Nb of chunks is %d , from %d to %d", nbChunks+1, 0, nbChunks)
 	if cfg.Dwn {
 		baseLink := check.GetBaseLink(cfg.Link)
 		bd := dwn.NewBulkDownloaderWithLog(log, "", ".ts", cfg.Path, errChan)
