@@ -1,21 +1,22 @@
 package dwn
 
+import (
+	"errors"
+	"fmt"
+)
+
+var (
+	ErrFileExist = errors.New("File already exists.")
+)
+
 type ErrDownload struct {
-	uri  string
-	file string
-	err  error
+	Uri  string
+	File string
+	Err  error
 }
 
 func (e ErrDownload) Error() string {
-	return e.err.Error()
-}
-
-func (e ErrDownload) URI() string {
-	return e.uri
-}
-
-func (e ErrDownload) File() string {
-	return e.file
+	return fmt.Sprintf("%s: %s\n", e.File, e.Err.Error())
 }
 
 type downloader interface {

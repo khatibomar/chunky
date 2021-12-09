@@ -26,16 +26,19 @@ func NewFileDownloader(url, name, path string) *FileDownloader {
 }
 
 func NewFileDownloaderWithLog(log *log.Logger, url, name, path string) *FileDownloader {
-	return &FileDownloader{
-		Url:  url,
-		Name: name,
-		Path: path,
-		Log:  log,
-	}
+	fd := NewFileDownloader(url, name, path)
+	fd.Log = log
+	return fd
 }
 
 func (fd *FileDownloader) Download() error {
-	err := os.MkdirAll(fd.Path, 0755)
+	p := path.Join(fd.Path, fd.Name)
+	fd.Log.Printf("Downloding %s...\n", p)
+	_, err := os.Stat(p)
+	if !os.IsNotExist(err) {
+		return ErrFileExist
+	}
+	err = os.MkdirAll(fd.Path, 0755)
 	if err != nil {
 		return err
 	}
@@ -45,14 +48,10 @@ func (fd *FileDownloader) Download() error {
 	}
 	defer resp.Body.Close()
 
-	fd.Log.Printf("Downloading %s to %s\n", fd.Name, fd.Path)
-
 	file, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
-
-	p := path.Join(fd.Path, fd.Name)
 
 	return os.WriteFile(p, file, 0664)
 }
