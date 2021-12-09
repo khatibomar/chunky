@@ -113,5 +113,7 @@ func run(log *log.Logger, cfg Config, errChan chan error) {
 			bd.AddUrl(baseLink + strconv.Itoa(i) + ".ts")
 		}
 		go bd.Download()
+	} else {
+		close(errChan)
 	}
 }
