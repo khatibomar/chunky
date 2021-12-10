@@ -33,10 +33,11 @@ func main() {
 	link := flag.String("url", "", `provide a link that have a chunk , example:
 https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_channel_name_blaabllablablabl/chunked/X.ts
 `)
-	p := flag.String("dir", "", "specify a download path , for *nix users use $HOME instead of ~ . In case no absolute path specified the folder will be created in same dir as the tool folder")
+	p := flag.String("dir", "", `specify a download path , for *nix users use $HOME instead of ~
+In case no absolute path specified the folder will be created in same dir as the tool folder`)
 	name := flag.String("name", "", "the name you want to save the video with without .mp4")
 	max := flag.Int("max", -1, "provide the excpected max number of files, zero or negative numbers will be treated as max int")
-	down := flag.Bool("dwn", true, "by default true , false if you just want to get chunks size without downloading files")
+	down := flag.Bool("dwn", true, "put -down=false if you just want to get chunks size without downloading files")
 
 	flag.Parse()
 
@@ -59,7 +60,7 @@ https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_channel_name_blaablla
 	if *down {
 		if err := checkDependencies(); err != nil {
 			errLogger.Println(err)
-			errLogger.Fatal("it look like ffmpeg is not install it, please installed before using the app")
+			errLogger.Fatal("It look like ffmpeg is not install it, please installed before using the app")
 		}
 	}
 
@@ -112,16 +113,11 @@ DONE_FOR:
 		infoLogger.Println("Start assembling video...")
 		os.Remove(path.Join(*p, *name+".ts"))
 		os.Remove(path.Join(*p, *name+".mp4"))
+		absPath, err := getAbsPath(*p)
+		if err != nil {
+			errLogger.Fatalln(err)
+		}
 		for i := 0; i <= chunksNb; i++ {
-			absPath := *p
-			if path.IsAbs(absPath) {
-			} else {
-				dir, err := os.Getwd()
-				if err != nil {
-					errLogger.Fatalln(err)
-				}
-				absPath = path.Join(dir, *p)
-			}
 			f.WriteString(fmt.Sprintf("file %s/%s%d.ts\n", absPath, *name, i))
 		}
 		f.Close()
@@ -189,12 +185,4 @@ func run(log *log.Logger, cfg Config, nbChunksChan chan int, errChan chan error,
 	} else {
 		doneChan <- true
 	}
-}
-
-func checkDependencies() error {
-	_, err := exec.LookPath("ffmpeg")
-	if err != nil {
-		return err
-	}
-	return nil
 }

@@ -33,7 +33,7 @@ func NewFileDownloaderWithLog(log *log.Logger, url, name, path string) *FileDown
 
 func (fd *FileDownloader) Download() error {
 	p := path.Join(fd.Path, fd.Name)
-	fd.Log.Printf("Downloding %s...\n", p)
+	fd.Log.Printf("Downloading %s...\n", p)
 	_, err := os.Stat(p)
 	if !os.IsNotExist(err) {
 		return ErrFileExist
