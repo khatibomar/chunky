@@ -49,65 +49,42 @@ https://github.com/khatibomar/chunky
 
 Usage:
   -dir string
-        specify a download path
+        specify a download path , for *nix users use $HOME instead of ~ . In case no absolute path specified the folder will be created in same dir as the tool folder
   -dwn
         by default true , false if you just want to get chunks size without downloading files (default true)
   -max int
         provide the excpected max number of files, zero or negative numbers will be treated as max int (default -1)
+  -name string
+        the name you want to save the video with without .mp4
   -url string
         provide a link that have a chunk , example:
-        https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_handmade_hero_40072241627_1633745055/chunked/155.ts
+        https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_channel_name_blaabllablablabl/chunked/X.ts
 ```
-The downloader at this point is very simple implementation so I encourage you to only use the tool to guess number of chunks and use external downloader.
-So I decided to just get only number of chunks
-```
-./chunky -dwn=false -url=https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/0.ts -max=2000
-```
-max here is totally random number because I dont think the number of chunks will exceed the max value if you didnt specify max the max will try the biggest integer possible , In case of number of chunks is more than 2000 an message will be printed on screen so don't worry :)
-```
-Info : 2021/12/08 22:11:39 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/2000.ts
-Info : 2021/12/08 22:11:40 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1000.ts
-Info : 2021/12/08 22:11:41 Highest Guess: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1000.ts
-Info : 2021/12/08 22:11:41 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1000.ts
-Info : 2021/12/08 22:11:41 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1500.ts
-Info : 2021/12/08 22:11:41 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1250.ts
-Info : 2021/12/08 22:11:42 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1125.ts
-Info : 2021/12/08 22:11:42 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1062.ts
-Info : 2021/12/08 22:11:43 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1031.ts
-Info : 2021/12/08 22:11:44 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1015.ts
-Info : 2021/12/08 22:11:45 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1023.ts
-Info : 2021/12/08 22:11:50 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1027.ts
-Info : 2021/12/08 22:12:01 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1025.ts
-Info : 2021/12/08 22:12:02 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1026.ts
-Info : 2021/12/08 22:12:03 Nb of chunks from 0 to 1026
-```
-the app got the number of chunks with very minimal number of checks instead of trying 2000 link we only checked 14 link!!
+those are the options for now
 
-now use any downloader you want to download chunks from `0` to number outputed by the app , in our case is `1026`
-or delete `-dwn=false` in case you want to use built in installer
-> size of the videos are big ~= 9GB
+```bash
+./chunky -name=bb -dir=$HOME/BabelOnBabylyon -url=https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/0.ts -max=2000
+```
 
 ```
-./chunky -url=https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/0.ts -max=2000 -dir=Video1
+Info : 2021/12/10 06:02:20 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/2000.ts
+Info : 2021/12/10 06:02:26 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1000.ts
+Info : 2021/12/10 06:02:26 Highest Guess: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1000.ts
+Info : 2021/12/10 06:02:26 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1000.ts
+Info : 2021/12/10 06:02:26 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1500.ts
+Info : 2021/12/10 06:02:27 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1250.ts
+Info : 2021/12/10 06:02:27 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1125.ts
+Info : 2021/12/10 06:02:28 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1062.ts
+Info : 2021/12/10 06:02:28 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1031.ts
+Info : 2021/12/10 06:02:29 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1015.ts
+Info : 2021/12/10 06:02:29 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1023.ts
+Info : 2021/12/10 06:02:30 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1027.ts
+Info : 2021/12/10 06:02:30 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1025.ts
+Info : 2021/12/10 06:02:30 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1026.ts
+Info : 2021/12/10 06:02:31 Nb of chunks is 1026 , from 0 to 1025
+Info : 2021/12/10 06:02:31 Downloding /home/okpc/BabelOnBabylyon/bb0.ts...
+Info : 2021/12/10 06:02:32 Downloding /home/okpc/BabelOnBabylyon/bb1.ts...
+Info : 2021/12/10 06:02:33 Downloding /home/okpc/BabelOnBabylyon/bb2.ts...
+^C
 ```
-I specified directory in this case you will see a new folder created in the same folder of the tool.
-After downloading all chunks successfully , now we are in the last step , combining all those chunks into 1 video
-```
-cd Video1
-```
-> NOTE: I didn't yet implemented the auto combining part but it's in the plan.
-
-```
-export NAME="[Handmade Hero] Babel On Babylion"
-export LENGTH=1026
-export BASEURL=https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/
-set -e
-rm mylist.txt *.mp4
-for i in $(seq 0 $LENGTH); do echo file $i.ts >> mylist.txt;done
-ffmpeg -safe 0 -f concat -i mylist.txt -c copy all.ts
-ffmpeg -i all.ts -acodec copy -vcodec copy all.mp4
-mv all.mp4 "$NAME.mp4"
-rm *.ts
-```
-
-after this step a new video with name of `[Handmade Hero] Babel On Babylion.mp4` will appear, ENJOY!!
+as we can see the app guessed the number of chunks very fast and start downloading chunks , after the download complete , the app will assemble all the parts to the name you specificed in `-name=...` into an assembled mp4 video , and will clean all the chunks and will only keep the mp4 video in the directory you specified with `-dir=...`
