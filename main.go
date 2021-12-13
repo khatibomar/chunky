@@ -155,7 +155,7 @@ DONE_FOR:
 func run(log *log.Logger, cfg Config, nbChunksChan chan int, errChan chan error, doneChan chan bool) {
 	var nbChunks int
 	var c *check.CloudfrontChecker
-	if cfg.Link == "" || cfg.Name == "" {
+	if cfg.Link == "" || (cfg.Dwn && cfg.Name == "") {
 		errChan <- ErrMissingArgs
 		doneChan <- true
 		return
