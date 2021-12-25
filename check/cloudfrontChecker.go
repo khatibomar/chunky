@@ -40,7 +40,7 @@ func NewTestCloudfrontChecker(url string, max int) *CloudfrontChecker {
 // GetChunksLength will return the chunks length of the video
 // it will use max parameter as highest possible chunk length
 func (c *CloudfrontChecker) Check() (int, error) {
-	c.Url = c.Url + "index-dvr.m3u8"
+	c.Url = GetBaseLink(c.Url) + "index-dvr.m3u8"
 	c.Log.Println(c.Url)
 
 	resp, err := http.Get(c.Url)
