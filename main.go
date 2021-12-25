@@ -33,7 +33,7 @@ func main() {
 	link := flag.String("url", "", `provide a link that have a chunk , example:
 https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_channel_name_blaabllablablabl/chunked/X.ts
 `)
-	p := flag.String("dir", "$HOME/Downloads", `specify a download path , for *nix users use $HOME instead of ~
+	p := flag.String("dir", "", `specify a download path , for *nix users use $HOME instead of ~
 In case no absolute path specified the folder will be created in same dir as the tool folder`)
 	name := flag.String("name", "", "the name you want to save the video with without .mp4")
 	max := flag.Int("max", -1, "provide the excpected max number of files, zero or negative numbers will be treated as max int")
@@ -41,6 +41,13 @@ In case no absolute path specified the folder will be created in same dir as the
 
 	flag.Parse()
 
+	if *p == "" {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			log.Fatalln("Unable to get homeDir")
+		}
+		*p = path.Join(homeDir, "Downloads")
+	}
 	*p = path.Clean(*p)
 
 	c := Config{
