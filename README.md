@@ -3,8 +3,10 @@ Chunky is a helper tool to download TTV videos including subscribers only , dele
 The tool depend on the https://pogu.live/ so if the website is down the tool will go down also.
 > It's in the early stages of developement so many errors are excpected , also many manual job need to be done that will be automated later.
 
+# Dependency
+this tool require `ffmpeg` to run , you will get an error if ffmpeg is not detected in the path when launching tool , so please make sure you have ffmpeg installed properly in your system.
 
-# Usage
+# Info
 In our example I am going to use this [video](https://www.twitch.tv/videos/1199813680) because it's free on youtube , but not on twitch.
 if we go to this URL we can see that it's for subscribers only
 
@@ -20,7 +22,11 @@ click on the link will open a player , solve capatcha wait few seconds and click
 https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/0.ts
 ```
 
-in our case we got this link it doesn't matter number of chunk the tool will take care of that. Now time of my tool `chunky` , the tool job is to guess the number of chunks that this video have , I use a modified `binary search` algorithm to find the number of chunks so it's superfast
+in our case we got this link it doesn't matter number of chunk the tool will take care of that. Now time of my tool `chunky`
+
+# Getting tool
+
+you can download binaries from the release page or compile it by your self , to compile : 
 
 first clone the repository
 ```bash
@@ -35,10 +41,14 @@ now in the terminal run
 ```bash
 go mod tidy
 go build
+```
+
+# Usage:
+
+```bash
 ./chunky
 ```
 > note: for windows users instead of ./chunky replace with chunky.exe in the cmd
-
 
 now you will see options
 ```
@@ -60,10 +70,12 @@ Usage:
         provide a link that have a chunk , example:
         https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_channel_name_blaabllablablabl/chunked/X.ts
 ```
+> NOTE: max is deprecated so it's no longer needed
+
 those are the options for now
 
 ```bash
-./chunky -name=bb -dir=$HOME/BabelOnBabylyon -url=https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/0.ts -max=2000
+./chunky -name=bb -dir=$HOME/BabelOnBabylyon -url=https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/0.ts 
 ```
 
 ```
