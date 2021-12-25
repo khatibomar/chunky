@@ -67,20 +67,6 @@ those are the options for now
 ```
 
 ```
-Info : 2021/12/10 06:02:20 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/2000.ts
-Info : 2021/12/10 06:02:26 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1000.ts
-Info : 2021/12/10 06:02:26 Highest Guess: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1000.ts
-Info : 2021/12/10 06:02:26 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1000.ts
-Info : 2021/12/10 06:02:26 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1500.ts
-Info : 2021/12/10 06:02:27 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1250.ts
-Info : 2021/12/10 06:02:27 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1125.ts
-Info : 2021/12/10 06:02:28 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1062.ts
-Info : 2021/12/10 06:02:28 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1031.ts
-Info : 2021/12/10 06:02:29 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1015.ts
-Info : 2021/12/10 06:02:29 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1023.ts
-Info : 2021/12/10 06:02:30 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1027.ts
-Info : 2021/12/10 06:02:30 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1025.ts
-Info : 2021/12/10 06:02:30 Trying: https://d2nvs31859zcd8.cloudfront.net/a05ed2eeabcd1d053260_handmade_hero_40195752827_1636398126/chunked/1026.ts
 Info : 2021/12/10 06:02:31 Nb of chunks is 1026 , from 0 to 1025
 Info : 2021/12/10 06:02:31 Downloding /home/okpc/BabelOnBabylyon/bb0.ts...
 Info : 2021/12/10 06:02:32 Downloding /home/okpc/BabelOnBabylyon/bb1.ts...
