@@ -1,11 +1,12 @@
 package check
 
 import (
+	"fmt"
 	"io"
 	"log"
-	"math"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type CloudfrontChecker struct {
@@ -39,84 +40,24 @@ func NewTestCloudfrontChecker(url string, max int) *CloudfrontChecker {
 // GetChunksLength will return the chunks length of the video
 // it will use max parameter as highest possible chunk length
 func (c *CloudfrontChecker) Check() (int, error) {
-	var low int
-	var mid int
-	var high int
-	var currHigh int
+	c.Url = c.Url + "index-dvr.m3u8"
+	c.Log.Println(c.Url)
 
-	var link string
-	var baseLink string
-
-	if c.Max <= 0 {
-		c.Max = math.MaxInt
-	}
-
-	high = c.Max
-	currHigh = high
-
-	baseLink = GetBaseLink(c.Url)
-	link = baseLink + strconv.Itoa(high) + ".ts"
-	c.Log.Println("Trying: " + link)
-	status, err := c.GetStatus(link)
+	resp, err := http.Get(c.Url)
 	if err != nil {
 		return -1, err
 	}
-	if status == http.StatusOK {
-		status, err = c.GetStatus(baseLink + strconv.Itoa(high+1) + ".ts")
-		if err != nil {
-			return -1, err
-		}
-		if status != http.StatusOK {
-			return high, nil
-		}
-		return -1, ErrOverMaxInt
+	defer resp.Body.Close()
+
+	r, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return -1, err
 	}
+	lines := strings.Split(string(r), "\n")
 
-	for {
-		high = high / 2
-		link = baseLink + strconv.Itoa(high) + ".ts"
-		c.Log.Println("Trying: " + link)
-
-		status, err := c.GetStatus(link)
-		if err != nil {
-			return -1, err
-		}
-
-		if status != http.StatusOK {
-			currHigh = high
-		} else {
-			high = currHigh
-			break
-		}
-
-		if low >= high {
-			return -1, ErrInvalid
-		}
+	if len(lines) < 2 {
+		return -1, fmt.Errorf("Excpected 2 or more lines got %d\n", len(lines))
 	}
-	c.Log.Println("Highest Guess: " + link)
-
-	for {
-		mid = (high + low) / 2
-		link = baseLink + strconv.Itoa(mid) + ".ts"
-
-		c.Log.Println("Trying: " + link)
-
-		status, err := c.GetStatus(link)
-		if err != nil {
-			return -1, err
-		}
-		if status == http.StatusOK {
-			low = mid
-		} else {
-			high = mid
-		}
-		if high == low+1 {
-			break
-		}
-		if low >= high {
-			return -1, ErrUnxcpected
-		}
-	}
-
-	return low, nil
+	chunks := strings.TrimSuffix(lines[len(lines)-3], ".ts")
+	return strconv.Atoi(chunks)
 }
