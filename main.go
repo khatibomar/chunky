@@ -36,6 +36,7 @@ https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_channel_name_blaablla
 In case no absolute path specified the folder will be created in same dir as the tool folder`)
 	name := flag.String("name", "", "the name you want to save the video with without .mp4")
 	down := flag.Bool("dwn", true, "put -down=false if you just want to get chunks size without downloading files")
+	routines := flag.Uint("t", 1, "number of concurrent downloads for rich users with fast internet")
 
 	flag.Parse()
 
@@ -47,12 +48,16 @@ In case no absolute path specified the folder will be created in same dir as the
 		*p = path.Join(homeDir, "Downloads")
 	}
 	*p = path.Clean(*p)
+	if *routines < 0 {
+		*routines = 1
+	}
 
 	c := Config{
-		Link: *link,
-		Path: *p,
-		Dwn:  *down,
-		Name: *name,
+		Link:     *link,
+		Path:     *p,
+		Dwn:      *down,
+		Name:     *name,
+		Routines: int(*routines),
 	}
 
 	infoLogger := log.New(os.Stdout, "Info : ", log.Ldate|log.Ltime)
@@ -182,7 +187,7 @@ func run(log *log.Logger, cfg Config, nbChunksChan chan int, errChan chan error,
 	log.Printf("Nb of chunks is %d , from %d to %d", nbChunks+1, 0, nbChunks)
 	if cfg.Dwn {
 		baseLink := check.GetBaseLink(cfg.Link)
-		bd := dwn.NewBulkDownloaderWithLog(log, cfg.Name, ".ts", cfg.Path, errChan, doneChan)
+		bd := dwn.NewBulkDownloaderWithLog(log, cfg.Name, ".ts", cfg.Path, cfg.Routines, errChan, doneChan)
 		for i := 0; i <= nbChunks; i++ {
 			bd.AddUrl(baseLink + strconv.Itoa(i) + ".ts")
 		}

@@ -64,6 +64,8 @@ Usage:
         by default true , false if you just want to get chunks size without downloading files (default true)
   -name string
         the name you want to save the video with without .mp4
+  -t uint
+        number of concurrent downloads for rich users with fast internet (default 1)
   -url string
         provide a link that have a chunk , example:
         https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_channel_name_blaabllablablabl/chunked/X.ts
