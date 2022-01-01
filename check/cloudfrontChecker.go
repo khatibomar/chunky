@@ -11,34 +11,31 @@ import (
 
 type CloudfrontChecker struct {
 	Url       string
-	Max       int
 	Log       *log.Logger
 	GetStatus func(string) (int, error)
 }
 
-func NewCloudfrontChecker(url string, max int) *CloudfrontChecker {
+func NewCloudfrontChecker(url string) *CloudfrontChecker {
 	return &CloudfrontChecker{
 		Url:       url,
-		Max:       max,
 		Log:       log.New(io.Discard, "", 0),
 		GetStatus: getStatusCode,
 	}
 }
 
-func NewCloudfrontCheckerWithLog(url string, max int, log *log.Logger) *CloudfrontChecker {
-	c := NewCloudfrontChecker(url, max)
+func NewCloudfrontCheckerWithLog(url string, log *log.Logger) *CloudfrontChecker {
+	c := NewCloudfrontChecker(url)
 	c.Log = log
 	return c
 }
 
-func NewTestCloudfrontChecker(url string, max int) *CloudfrontChecker {
-	c := NewCloudfrontChecker(url, max)
+func NewTestCloudfrontChecker(url string) *CloudfrontChecker {
+	c := NewCloudfrontChecker(url)
 	c.GetStatus = mockGetStatusCode
 	return c
 }
 
 // GetChunksLength will return the chunks length of the video
-// it will use max parameter as highest possible chunk length
 func (c *CloudfrontChecker) Check() (int, error) {
 	c.Url = GetBaseLink(c.Url) + "index-dvr.m3u8"
 	c.Log.Println(c.Url)
@@ -48,6 +45,10 @@ func (c *CloudfrontChecker) Check() (int, error) {
 		return -1, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return -1, fmt.Errorf("Respond other than 200 , please check link if correct or site is down")
+	}
 
 	r, err := io.ReadAll(resp.Body)
 	if err != nil {

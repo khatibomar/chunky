@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"math"
 	"os"
 	"os/exec"
 	"path"
@@ -36,7 +35,6 @@ https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_channel_name_blaablla
 	p := flag.String("dir", "", `specify a download path , for *nix users use $HOME instead of ~
 In case no absolute path specified the folder will be created in same dir as the tool folder`)
 	name := flag.String("name", "", "the name you want to save the video with without .mp4")
-	max := flag.Int("max", -1, "provide the excpected max number of files, zero or negative numbers will be treated as max int")
 	down := flag.Bool("dwn", true, "put -down=false if you just want to get chunks size without downloading files")
 
 	flag.Parse()
@@ -52,7 +50,6 @@ In case no absolute path specified the folder will be created in same dir as the
 
 	c := Config{
 		Link: *link,
-		Max:  *max,
 		Path: *p,
 		Dwn:  *down,
 		Name: *name,
@@ -172,11 +169,7 @@ func run(log *log.Logger, cfg Config, nbChunksChan chan int, errChan chan error,
 		doneChan <- true
 		return
 	}
-	if cfg.Max <= 0 {
-		c = check.NewCloudfrontCheckerWithLog(cfg.Link, math.MaxInt-1, log)
-	} else {
-		c = check.NewCloudfrontCheckerWithLog(cfg.Link, cfg.Max, log)
-	}
+	c = check.NewCloudfrontChecker(cfg.Link)
 	nbChunks, err := c.Check()
 	if err != nil {
 		errChan <- err

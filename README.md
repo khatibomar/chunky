@@ -62,15 +62,12 @@ Usage:
         specify a download path , for *nix users use $HOME instead of ~ . In case no absolute path specified the folder will be created in same dir as the tool folder
   -dwn
         by default true , false if you just want to get chunks size without downloading files (default true)
-  -max int
-        provide the excpected max number of files, zero or negative numbers will be treated as max int (default -1)
   -name string
         the name you want to save the video with without .mp4
   -url string
         provide a link that have a chunk , example:
         https://d2nvs31859zcd8.cloudfront.net/70c102b5b66dbeac89e4_channel_name_blaabllablablabl/chunked/X.ts
 ```
-> NOTE: max is deprecated so it's no longer needed
 
 those are the options for now
 
